@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signInSchema } from "../schemas";
-import { useLogin } from "../api/use-login";
+import { useLogin } from "../api/mutations/use-login";
 
 export function SignInCard() {
   const { mutate: login } = useLogin();

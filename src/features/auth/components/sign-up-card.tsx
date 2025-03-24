@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { registerSchema } from "../schemas";
-import { useRegister } from "../api/use-register";
+import { useRegister } from "../api/mutations/use-register";
 
 export function SignUpCard() {
   const { mutate: register } = useRegister();
