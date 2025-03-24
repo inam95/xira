@@ -27,7 +27,7 @@ import { registerSchema } from "../schemas";
 import { useRegister } from "../api/mutations/use-register";
 
 export function SignUpCard() {
-  const { mutate: register } = useRegister();
+  const { mutate: register, isPending } = useRegister();
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -112,7 +112,12 @@ export function SignUpCard() {
                 </FormItem>
               )}
             />
-            <Button type="submit" size="lg" className="w-full" disabled={false}>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isPending}
+            >
               Sign Up
             </Button>
           </form>

@@ -1,26 +1,17 @@
-"use client";
+import { UserButton } from "@/features/auth/components/user-button";
+import { getCurrent } from "@/features/auth/actions";
+import { redirect } from "next/navigation";
 
-import { useLogout } from "@/features/auth/api/mutations/use-logout";
-import { authQueries } from "@/features/auth/api/queries";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+export default async function Home() {
+  const user = await getCurrent();
 
-export default function Home() {
-  const router = useRouter();
-  const { data, isLoading } = useQuery(authQueries.current());
-  const { mutate: logout } = useLogout();
-
-  useEffect(() => {
-    if (!data && !isLoading) {
-      router.push("/sign-in");
-    }
-  }, [data, isLoading, router]);
+  if (!user) {
+    return redirect("/sign-in");
+  }
 
   return (
     <div>
-      Authorized
-      <button onClick={() => logout()}>Logout</button>
+      <UserButton />
     </div>
   );
 }
