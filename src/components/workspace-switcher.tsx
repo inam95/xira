@@ -12,8 +12,12 @@ import {
 } from "./ui/select";
 import { WorkspaceAvatar } from "@/features/workspaces/components/workspace-avatar";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 export function WorkspaceSwitcher() {
+  const router = useRouter();
+  const workspaceId = useWorkspaceId();
   const {
     data: workspaces,
     isError,
@@ -21,6 +25,10 @@ export function WorkspaceSwitcher() {
   } = useQuery({
     ...workspaceQueries.list(),
   });
+
+  const onSelect = (value: string) => {
+    router.push(`/workspaces/${value}`);
+  };
 
   const hasWorkspaces =
     workspaces?.documents && workspaces.documents.length > 0;
@@ -45,7 +53,7 @@ export function WorkspaceSwitcher() {
         <p className="text-xs uppercase text-neutral-500">Workspaces</p>
         <RiAddCircleFill className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition" />
       </div>
-      <Select disabled={isPending}>
+      <Select disabled={isPending} onValueChange={onSelect} value={workspaceId}>
         <SelectTrigger className="w-full bg-neutral-200 font-medium p-1">
           {isPending ? (
             <div className="flex items-center gap-2">
