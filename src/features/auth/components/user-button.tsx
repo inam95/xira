@@ -14,8 +14,12 @@ import { Loader, LogOut } from "lucide-react";
 import { DottedSeparator } from "@/components/dotted-separator";
 
 export function UserButton() {
-  const { data: user, isLoading } = useQuery(authQueries.current());
+  const { data: user, isLoading } = useQuery({
+    ...authQueries.current(),
+  });
   const { mutate: logout } = useLogout();
+
+  console.log("user", user);
 
   if (isLoading) {
     return (

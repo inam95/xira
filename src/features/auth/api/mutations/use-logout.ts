@@ -5,7 +5,7 @@ import { InferResponseType } from "hono";
 import { authQueries } from "../queries";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import { workspaceQueries } from "@/features/workspaces/api/queries";
 type ResponseType = InferResponseType<(typeof client.api.auth.logout)["$post"]>;
 
 export const useLogout = () => {
@@ -25,6 +25,9 @@ export const useLogout = () => {
       router.refresh();
       queryClient.invalidateQueries({
         queryKey: authQueries.current().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: workspaceQueries.list().queryKey,
       });
     },
     onError: () => {

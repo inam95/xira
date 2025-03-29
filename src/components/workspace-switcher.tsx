@@ -25,7 +25,7 @@ export function WorkspaceSwitcher() {
   const hasWorkspaces =
     workspaces?.documents && workspaces.documents.length > 0;
 
-  if (isError) {
+  if (!isPending && isError) {
     return (
       <div className="flex flex-col gap-y-2">
         <div className="flex items-center justify-between">
