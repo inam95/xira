@@ -14,7 +14,7 @@ import { WorkspaceAvatar } from "@/features/workspaces/components/workspace-avat
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-
+import { useCreateWorkspaceModal } from "@/features/workspaces/hooks/use-create-workspace-modal";
 export function WorkspaceSwitcher() {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
@@ -25,6 +25,7 @@ export function WorkspaceSwitcher() {
   } = useQuery({
     ...workspaceQueries.list(),
   });
+  const { open } = useCreateWorkspaceModal();
 
   const onSelect = (value: string) => {
     router.push(`/workspaces/${value}`);
@@ -51,7 +52,10 @@ export function WorkspaceSwitcher() {
     <div className="flex flex-col gap-y-2">
       <div className="flex items-center justify-between">
         <p className="text-xs uppercase text-neutral-500">Workspaces</p>
-        <RiAddCircleFill className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition" />
+        <RiAddCircleFill
+          className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"
+          onClick={open}
+        />
       </div>
       <Select disabled={isPending} onValueChange={onSelect} value={workspaceId}>
         <SelectTrigger className="w-full bg-neutral-200 font-medium p-1">
