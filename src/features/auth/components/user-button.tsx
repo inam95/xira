@@ -19,8 +19,6 @@ export function UserButton() {
   });
   const { mutate: logout } = useLogout();
 
-  console.log("user", user);
-
   if (isLoading) {
     return (
       <div className="size-10 rounded-full flex items-center justify-center bg-neutral-200 border-neutral-300">

@@ -8,7 +8,6 @@ export const authQueries = {
     queryOptions({
       queryKey: [...authQueries.auth().queryKey, "current"],
       queryFn: async () => {
-        console.log("fetching current user");
         const response = await client.api.auth.current["$get"]();
         if (!response.ok) {
           return null;
