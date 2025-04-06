@@ -204,46 +204,50 @@ const app = new Hono()
   .post(
     "/:workspaceId/join",
     sessionMiddleware,
-    zValidator("form", z.object({ code: z.string() })),
+    zValidator("json", z.object({ code: z.string() })),
     async (c) => {
-      const databases = c.get("databases");
-      const user = c.get("user");
+      try {
+        const databases = c.get("databases");
+        const user = c.get("user");
 
-      const { workspaceId } = c.req.param();
-      const { code } = c.req.valid("form");
+        const { workspaceId } = c.req.param();
+        const { code } = c.req.valid("json");
 
-      const member = await getMember({
-        databases,
-        userId: user.$id,
-        workspaceId,
-      });
-
-      if (member) {
-        return c.json({ error: "Already a member of this workspace" }, 400);
-      }
-
-      const workspace = await databases.getDocument<Workspace>(
-        DATABASE_ID,
-        WORKSPACE_COLLECTION_ID,
-        workspaceId
-      );
-
-      if (workspace.inviteCode !== code) {
-        return c.json({ error: "Invalid invite code" }, 401);
-      }
-
-      await databases.createDocument(
-        DATABASE_ID,
-        MEMBERS_COLLECTION_ID,
-        ID.unique(),
-        {
+        const member = await getMember({
+          databases,
           userId: user.$id,
           workspaceId,
-          role: MEMBER_ROLES.MEMBER,
-        }
-      );
+        });
 
-      return c.json({ data: workspace });
+        if (member) {
+          return c.json({ error: "Already a member of this workspace" }, 400);
+        }
+
+        const workspace = await databases.getDocument<Workspace>(
+          DATABASE_ID,
+          WORKSPACE_COLLECTION_ID,
+          workspaceId
+        );
+
+        if (workspace.inviteCode !== code) {
+          return c.json({ error: "Invalid invite code" }, 401);
+        }
+
+        await databases.createDocument(
+          DATABASE_ID,
+          MEMBERS_COLLECTION_ID,
+          ID.unique(),
+          {
+            userId: user.$id,
+            workspaceId,
+            role: MEMBER_ROLES.MEMBER,
+          }
+        );
+
+        return c.json({ data: workspace });
+      } catch (error) {
+        throw new Error("Failed to join workspace", { cause: error });
+      }
     }
   );
 
