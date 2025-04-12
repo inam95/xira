@@ -12,10 +12,10 @@ import {
   MoreVerticalIcon,
   ShieldCheckIcon,
   TrashIcon,
+  Loader2Icon,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { useWorkspaceId } from "../hooks/use-workspace-id";
 import {
   DropdownMenu,
@@ -25,9 +25,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDeleteMember } from "@/features/members/api/mutations/use-delete-member";
 import { useUpdateMember } from "@/features/members/api/mutations/use-update-member";
-import { MemberRole } from "@/features/members/types";
+import { MEMBER_ROLES, MemberRole } from "@/features/members/types";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 
 function MemberSkeleton() {
   return (
@@ -44,7 +45,10 @@ function MemberSkeleton() {
 
 export function MembersList() {
   const workspaceId = useWorkspaceId();
-  const pathname = usePathname();
+  const [activeOperation, setActiveOperation] = useState<{
+    memberId: string;
+    type: "update" | "delete";
+  } | null>(null);
   const [ConfirmDialog, confirm] = useConfirm({
     title: "Remove member",
     message: "Are you sure you want to remove this member?",
@@ -63,29 +67,43 @@ export function MembersList() {
 
     if (!confirmed) return;
 
-    deleteMember({
-      param: {
-        memberId,
+    setActiveOperation({ memberId, type: "delete" });
+    deleteMember(
+      {
+        param: {
+          memberId,
+        },
       },
-    });
+      {
+        onSuccess: () => setActiveOperation(null),
+        onError: () => setActiveOperation(null),
+      }
+    );
   };
 
   const handleUpdateMember = async (memberId: string, role: MemberRole) => {
-    updateMember({
-      param: {
-        memberId,
+    setActiveOperation({ memberId, type: "update" });
+    updateMember(
+      {
+        param: {
+          memberId,
+        },
+        json: {
+          role,
+        },
       },
-      json: {
-        role,
-      },
-    });
+      {
+        onSuccess: () => setActiveOperation(null),
+        onError: () => setActiveOperation(null),
+      }
+    );
   };
 
   return (
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
         <Button variant="secondary" size="sm" asChild>
-          <Link href={`${pathname}/members`}>
+          <Link href={`/workspaces/${workspaceId}`}>
             <ArrowLeftIcon className="size-4 mr-2" />
             <span>Back</span>
           </Link>
@@ -105,8 +123,8 @@ export function MembersList() {
               <Separator className="my-2.5" />
               <MemberSkeleton />
             </>
-          ) : (
-            members?.documents.map((member, index) => (
+          ) : members?.documents ? (
+            members.documents.map((member, index) => (
               <Fragment key={member.$id}>
                 <div className="flex items-center gap-2">
                   <MemberAvatar
@@ -115,7 +133,18 @@ export function MembersList() {
                     name={member.name}
                   />
                   <div className="flex flex-col">
-                    <p className="text-sm font-medium">{member.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium">{member.name}</p>
+                      {member.role === MEMBER_ROLES.ADMIN && (
+                        <Badge
+                          variant="secondary"
+                          className="flex items-center gap-1"
+                        >
+                          <ShieldCheckIcon className="size-3" />
+                          <span>Admin</span>
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       {member.email}
                     </p>
@@ -126,15 +155,22 @@ export function MembersList() {
                         variant="secondary"
                         size="icon"
                         className="ml-auto"
+                        disabled={activeOperation?.memberId === member.$id}
                       >
-                        <MoreVerticalIcon className="size-4 text-muted-foreground" />
+                        {activeOperation?.memberId === member.$id ? (
+                          <Loader2Icon className="size-4 animate-spin" />
+                        ) : (
+                          <MoreVerticalIcon className="size-4 text-muted-foreground" />
+                        )}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem
                         className="font-medium"
                         onClick={() => handleUpdateMember(member.$id, "ADMIN")}
-                        disabled={isUpdating}
+                        disabled={
+                          isUpdating || activeOperation?.memberId === member.$id
+                        }
                       >
                         <ShieldCheckIcon className="size-4 mr-2" />
                         <span>Set as administrator</span>
@@ -142,7 +178,9 @@ export function MembersList() {
                       <DropdownMenuItem
                         className="font-medium"
                         onClick={() => handleUpdateMember(member.$id, "MEMBER")}
-                        disabled={isUpdating}
+                        disabled={
+                          isUpdating || activeOperation?.memberId === member.$id
+                        }
                       >
                         <ShieldCheckIcon className="size-4 mr-2" />
                         <span>Set as member</span>
@@ -150,7 +188,9 @@ export function MembersList() {
                       <DropdownMenuItem
                         className="font-medium text-amber-700"
                         onClick={() => handleRemoveMember(member.$id)}
-                        disabled={isDeleting}
+                        disabled={
+                          isDeleting || activeOperation?.memberId === member.$id
+                        }
                       >
                         <TrashIcon className="size-4 mr-2" />
                         <span>Remove</span>
@@ -163,7 +203,7 @@ export function MembersList() {
                 )}
               </Fragment>
             ))
-          )}
+          ) : null}
         </div>
       </CardContent>
       <ConfirmDialog />
