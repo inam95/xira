@@ -25,4 +25,12 @@ export const projectsQueries = {
         return data;
       },
     }),
+
+  projectById: ({ projectId }: { projectId: string }) =>
+    queryOptions({
+      queryKey: [...projectsQueries.projects().queryKey, projectId],
+      // queryFn: async () => {
+      //   const response = await client.api.projects[":projectId"]["$get"]({ param: { projectId } });
+      // },
+    }),
 };
