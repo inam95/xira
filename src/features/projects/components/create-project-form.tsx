@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCreateProject } from "../api/mutations/use-create-project";
 import { createProjectSchemaWithoutWorkspaceId } from "../schemas";
+import { useRouter } from "next/navigation";
 
 type CreateProjectFormProps = {
   onCancel?: () => void;
@@ -30,6 +31,7 @@ type CreateProjectFormProps = {
 
 export function CreateProjectForm({ onCancel }: CreateProjectFormProps) {
   const workspaceId = useWorkspaceId();
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const { mutate: createProject, isPending } = useCreateProject();
   const form = useForm<z.infer<typeof createProjectSchemaWithoutWorkspaceId>>({
@@ -48,7 +50,7 @@ export function CreateProjectForm({ onCancel }: CreateProjectFormProps) {
     createProject(
       { form: finalValues },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           form.reset({
             name: "",
             image: undefined,
@@ -56,8 +58,7 @@ export function CreateProjectForm({ onCancel }: CreateProjectFormProps) {
           if (inputRef.current) {
             inputRef.current.value = "";
           }
-          onCancel?.();
-          // TODO: Redirect to project page
+          router.push(`/workspaces/${workspaceId}/projects/${data.$id}`);
         },
       }
     );
