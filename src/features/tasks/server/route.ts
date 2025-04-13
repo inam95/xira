@@ -12,7 +12,7 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
-import { CreateTaskSchema } from "../schemas";
+import { createTaskSchema } from "../schemas";
 import { TaskStatus } from "../types";
 
 const app = new Hono()
@@ -132,7 +132,7 @@ const app = new Hono()
   .post(
     "/",
     sessionMiddleware,
-    zValidator("json", CreateTaskSchema),
+    zValidator("json", createTaskSchema),
     async (c) => {
       const user = c.get("user");
       const databases = c.get("databases");
