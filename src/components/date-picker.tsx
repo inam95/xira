@@ -11,7 +11,7 @@ export function DatePicker({
   className,
   placeholder = "Select date",
 }: {
-  value: Date;
+  value: Date | undefined;
   onChange: (date: Date) => void;
   className?: string;
   placeholder?: string;
@@ -28,7 +28,7 @@ export function DatePicker({
           )}
         >
           {value ? format(value, "PPP") : <span>{placeholder}</span>}
-          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          <CalendarIcon className="ml-auto size-4 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
