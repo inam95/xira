@@ -1,3 +1,5 @@
+import { Models } from "node-appwrite";
+
 export const TaskStatus = {
   BACKLOG: "BACKLOG",
   TODO: "TODO",
@@ -7,3 +9,14 @@ export const TaskStatus = {
 } as const;
 
 export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
+
+export type Task = Models.Document & {
+  name: string;
+  status: TaskStatus;
+  workspaceId: string;
+  assigneeId: string;
+  projectId: string;
+  position: number;
+  dueDate: string;
+  description?: string;
+};

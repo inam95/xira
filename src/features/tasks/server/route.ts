@@ -5,6 +5,7 @@ import {
   TASKS_COLLECTION_ID,
 } from "@/config";
 import { getMember } from "@/features/members/utils";
+import { Member } from "@/features/members/types";
 import { Project } from "@/features/projects/types";
 import { createAdminClient } from "@/lib/appwrite";
 import { sessionMiddleware } from "@/lib/session-middleware";
@@ -13,7 +14,7 @@ import { Hono } from "hono";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
 import { createTaskSchema } from "../schemas";
-import { TaskStatus } from "../types";
+import { Task, TaskStatus } from "../types";
 
 const app = new Hono()
   .get(
@@ -74,10 +75,10 @@ const app = new Hono()
 
       if (dueDate) {
         console.log("dueDate", dueDate);
-        query.push(Query.equal("dueDate", dueDate));
+        query.push(Query.lessThan("dueDate", dueDate));
       }
 
-      const tasks = await databases.listDocuments(
+      const tasks = await databases.listDocuments<Task>(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         query
@@ -92,7 +93,7 @@ const app = new Hono()
         projectIds.length > 0 ? [Query.contains("$id", projectIds)] : []
       );
 
-      const members = await databases.listDocuments(
+      const members = await databases.listDocuments<Member>(
         DATABASE_ID,
         MEMBERS_COLLECTION_ID,
         assigneeIds.length > 0 ? [Query.contains("$id", assigneeIds)] : []
@@ -156,7 +157,7 @@ const app = new Hono()
         return c.json({ error: "Unauthorized" }, 401);
       }
 
-      const highestPositionTask = await databases.listDocuments(
+      const highestPositionTask = await databases.listDocuments<Task>(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         [
@@ -172,7 +173,7 @@ const app = new Hono()
           ? highestPositionTask.documents[0].position + 1000
           : 1000;
 
-      const task = await databases.createDocument(
+      const task = await databases.createDocument<Task>(
         DATABASE_ID,
         TASKS_COLLECTION_ID,
         ID.unique(),
