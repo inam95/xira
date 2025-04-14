@@ -1,17 +1,22 @@
 "use client";
 
+import { DataFilters } from "@/components/data-filters";
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TabsContent } from "@radix-ui/react-tabs";
-import { PlusIcon } from "lucide-react";
-import { useCreateTaskModal } from "../hooks/use-create-task-modal";
-import { useQuery } from "@tanstack/react-query";
-import { tasksQueries } from "../api/queries";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { TabsContent } from "@radix-ui/react-tabs";
+import { useQuery } from "@tanstack/react-query";
+import { Loader, PlusIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
+import { tasksQueries } from "../api/queries";
+import { useCreateTaskModal } from "../hooks/use-create-task-modal";
+import { useTaskFilters } from "../hooks/use-task-filters";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 
 export function TaskViewSwitcher() {
+  const [{ projectId, status, assigneeId, search, dueDate }] = useTaskFilters();
   const [view, setView] = useQueryState<"table" | "kanban" | "calendar">(
     "task-view",
     {
@@ -21,9 +26,14 @@ export function TaskViewSwitcher() {
   );
   const { open } = useCreateTaskModal();
   const workspaceId = useWorkspaceId();
-  const { data: tasks } = useQuery({
+  const { data: tasks, isLoading: isTasksLoading } = useQuery({
     ...tasksQueries.filteredList({
       workspaceId: workspaceId,
+      projectId,
+      status,
+      assigneeId,
+      search,
+      dueDate,
     }),
   });
 
@@ -52,20 +62,25 @@ export function TaskViewSwitcher() {
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        {/* Add Filters */}
-        Filters
+        <DataFilters />
         <DottedSeparator className="my-4" />
-        <>
-          <TabsContent value="table">
-            {JSON.stringify(tasks, null, 2)}
-          </TabsContent>
-          <TabsContent value="kanban">
-            {JSON.stringify(tasks, null, 2)}
-          </TabsContent>
-          <TabsContent value="calendar">
-            {JSON.stringify(tasks, null, 2)}
-          </TabsContent>
-        </>
+        {isTasksLoading ? (
+          <div className="w-full border rounded-lg h-[200px] flex flex-col justify-around items-center">
+            <Loader className="size-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <>
+            <TabsContent value="table">
+              <DataTable columns={columns} data={tasks?.data.documents ?? []} />
+            </TabsContent>
+            <TabsContent value="kanban">
+              {JSON.stringify(tasks, null, 2)}
+            </TabsContent>
+            <TabsContent value="calendar">
+              {JSON.stringify(tasks, null, 2)}
+            </TabsContent>
+          </>
+        )}
       </div>
     </Tabs>
   );
