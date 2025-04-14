@@ -6,13 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import { CreateTaskForm } from "./create-task-form";
 
-type CreateTaskModalWrapperProps = {
+type CreateFormModalWrapperProps = {
   onCancel: () => void;
 };
 
-export function CreateTaskModalWrapper({
+export function CreateFormModalWrapper({
   onCancel,
-}: CreateTaskModalWrapperProps) {
+}: CreateFormModalWrapperProps) {
   const workspaceId = useWorkspaceId();
   const { data: projects, isLoading: isProjectsLoading } = useQuery({
     ...projectsQueries.listByWorkspace({
