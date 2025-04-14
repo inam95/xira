@@ -5,6 +5,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ExternalLinkIcon, PencilIcon, TrashIcon } from "lucide-react";
+import { useDeleteTask } from "../api/mutations/use-delete-task";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useRouter } from "next/navigation";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 type TaskActionsProps = {
   id: string;
@@ -13,13 +17,37 @@ type TaskActionsProps = {
 };
 
 export function TaskActions({ id, projectId, children }: TaskActionsProps) {
+  const workspaceId = useWorkspaceId();
+  const router = useRouter();
+
+  const { mutate: deleteTask, isPending } = useDeleteTask();
+  const [ConfirmDialog, confirm] = useConfirm({
+    title: "Delete Task",
+    message: "Are you sure you want to delete this task?",
+    variant: "destructive",
+  });
+
+  const handleDelete = async () => {
+    const confirmed = await confirm();
+    if (!confirmed) return;
+    deleteTask({ param: { taskId: id } });
+  };
+
+  const onOpenTask = () => {
+    router.push(`/workspaces/${workspaceId}/tasks/${id}`);
+  };
+
+  const onOpenProject = () => {
+    router.push(`/workspaces/${workspaceId}/projects/${projectId}`);
+  };
+
   return (
     <div className="flex justify-end">
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
         <DropdownMenuContent className="w-48" align="end">
           <DropdownMenuItem
-            onClick={() => {}}
+            onClick={onOpenTask}
             disabled={false}
             className="font-medium p-[10px]"
           >
@@ -35,7 +63,7 @@ export function TaskActions({ id, projectId, children }: TaskActionsProps) {
             Edit Task
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => {}}
+            onClick={onOpenProject}
             disabled={false}
             className="font-medium p-[10px]"
           >
@@ -43,8 +71,8 @@ export function TaskActions({ id, projectId, children }: TaskActionsProps) {
             Open Project
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => {}}
-            disabled={false}
+            onClick={handleDelete}
+            disabled={isPending}
             className="text-amber-700 focus:text-amber-700 font-medium p-[10px]"
           >
             <TrashIcon className="size-4 mr-2 stroke-2" />
@@ -52,6 +80,7 @@ export function TaskActions({ id, projectId, children }: TaskActionsProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <ConfirmDialog />
     </div>
   );
 }
