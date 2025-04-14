@@ -45,4 +45,19 @@ export const tasksQueries = {
         return await response.json();
       },
     }),
+  getById: (taskId: string) =>
+    queryOptions({
+      queryKey: [...tasksQueries.tasks().queryKey, taskId] as const,
+      queryFn: async () => {
+        const response = await client.api.tasks[":taskId"]["$get"]({
+          param: { taskId },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch task");
+        }
+
+        return await response.json();
+      },
+    }),
 };
