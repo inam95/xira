@@ -22,7 +22,7 @@ export const tasksQueries = {
   filteredList: (props: FilteredListProps) =>
     queryOptions({
       queryKey: [
-        ...tasksQueries.tasks().queryKey,
+        ...tasksQueries.list().queryKey,
         "filteredList",
         props,
       ] as const,
