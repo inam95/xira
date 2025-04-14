@@ -191,6 +191,35 @@ const app = new Hono()
 
       return c.json({ data: task });
     }
-  );
+  )
+  .delete("/:taskId", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const databases = c.get("databases");
+    const { taskId } = c.req.param();
+
+    const task = await databases.getDocument<Task>(
+      DATABASE_ID,
+      TASKS_COLLECTION_ID,
+      taskId
+    );
+
+    if (!task) {
+      return c.json({ error: "Task not found" }, 404);
+    }
+
+    const member = await getMember({
+      databases,
+      userId: user.$id,
+      workspaceId: task.workspaceId,
+    });
+
+    if (!member) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    await databases.deleteDocument(DATABASE_ID, TASKS_COLLECTION_ID, taskId);
+
+    return c.json({ data: { $id: task.$id } });
+  });
 
 export default app;
