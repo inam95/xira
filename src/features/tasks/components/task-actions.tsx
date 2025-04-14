@@ -9,6 +9,7 @@ import { useDeleteTask } from "../api/mutations/use-delete-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useEditTaskModal } from "../hooks/use-edit-task-modal";
 
 type TaskActionsProps = {
   id: string;
@@ -19,6 +20,7 @@ type TaskActionsProps = {
 export function TaskActions({ id, projectId, children }: TaskActionsProps) {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
+  const { open } = useEditTaskModal();
 
   const { mutate: deleteTask, isPending } = useDeleteTask();
   const [ConfirmDialog, confirm] = useConfirm({
@@ -55,7 +57,9 @@ export function TaskActions({ id, projectId, children }: TaskActionsProps) {
             Task Details
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => {}}
+            onClick={() => {
+              open(id);
+            }}
             disabled={false}
             className="font-medium p-[10px]"
           >

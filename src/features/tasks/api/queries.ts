@@ -45,7 +45,7 @@ export const tasksQueries = {
         return await response.json();
       },
     }),
-  getById: (taskId: string) =>
+  getById: ({ taskId }: { taskId: string }) =>
     queryOptions({
       queryKey: [...tasksQueries.tasks().queryKey, taskId] as const,
       queryFn: async () => {
