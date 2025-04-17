@@ -25,7 +25,7 @@ export function TaskDate({ value, className }: TaskDateProps) {
 
   return (
     <div className={textColor}>
-      <span className={cn("truncate", className)}>{format(value, "PPP")}</span>
+      <div className={cn("truncate", className)}>{format(value, "PPP")}</div>
     </div>
   );
 }
