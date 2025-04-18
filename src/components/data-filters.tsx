@@ -1,8 +1,11 @@
 import { memberQueries } from "@/features/members/api/queries";
 import { projectsQueries } from "@/features/projects/api/queries";
-import { useQuery } from "@tanstack/react-query";
+import { useTaskFilters } from "@/features/tasks/hooks/use-task-filters";
+import { TaskStatus } from "@/features/tasks/types";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { ListCheckIcon, Loader, UserIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ListCheckIcon, UserIcon } from "lucide-react";
+import { DatePicker } from "./date-picker";
 import {
   Select,
   SelectContent,
@@ -11,9 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { TaskStatus } from "@/features/tasks/types";
-import { useTaskFilters } from "@/features/tasks/hooks/use-task-filters";
-import { DatePicker } from "./date-picker";
+
 type DataFiltersProps = {
   hideProjectFilter?: boolean;
 };
@@ -102,23 +103,28 @@ export function DataFilters({ hideProjectFilter }: DataFiltersProps) {
           ))}
         </SelectContent>
       </Select>
-      <Select defaultValue={projectId ?? "all"} onValueChange={onProjectChange}>
-        <SelectTrigger className="w-full lg:w-auto !h-8">
-          <div className="flex items-center pr-2">
-            <UserIcon className="size-4 mr-2" />
-            <SelectValue placeholder="All assignees" />
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All projects</SelectItem>
-          <SelectSeparator />
-          {projectOptions?.map((project) => (
-            <SelectItem key={project.value} value={project.value}>
-              {project.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {!hideProjectFilter && (
+        <Select
+          defaultValue={projectId ?? "all"}
+          onValueChange={onProjectChange}
+        >
+          <SelectTrigger className="w-full lg:w-auto !h-8">
+            <div className="flex items-center pr-2">
+              <UserIcon className="size-4 mr-2" />
+              <SelectValue placeholder="All assignees" />
+            </div>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All projects</SelectItem>
+            <SelectSeparator />
+            {projectOptions?.map((project) => (
+              <SelectItem key={project.value} value={project.value}>
+                {project.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
       <DatePicker
         placeholder="Due date"
         className="w-full lg:w-auto h-8"

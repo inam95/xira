@@ -11,8 +11,6 @@ import {
 } from "date-fns";
 import { useState } from "react";
 
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import "./data-calendar.css";
 import { EvenCard } from "./even-card";
 import { CustomToolbar } from "./custom-toolbar";
 

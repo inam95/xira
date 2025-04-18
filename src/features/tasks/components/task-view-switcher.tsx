@@ -20,7 +20,11 @@ import { useCallback } from "react";
 import { useBulkUpdateTasks } from "../api/mutations/use-bulk-update-tasks";
 import { DataCalendar } from "./data-calendar";
 
-export function TaskViewSwitcher() {
+type TaskViewSwitcherProps = {
+  hideProjectFilter?: boolean;
+};
+
+export function TaskViewSwitcher({ hideProjectFilter }: TaskViewSwitcherProps) {
   const [{ projectId, status, assigneeId, search, dueDate }] = useTaskFilters();
   const [view, setView] = useQueryState<"table" | "kanban" | "calendar">(
     "task-view",
@@ -86,7 +90,7 @@ export function TaskViewSwitcher() {
           </Button>
         </div>
         <DottedSeparator className="my-4" />
-        <DataFilters />
+        <DataFilters hideProjectFilter={hideProjectFilter} />
         <DottedSeparator className="my-4" />
         {isTasksLoading ? (
           <div className="w-full border rounded-lg h-[200px] flex flex-col justify-around items-center">
