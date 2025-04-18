@@ -34,7 +34,7 @@ export const useUpdateTask = () => {
       toast.success("Task updated");
       router.refresh();
       queryClient.invalidateQueries({
-        queryKey: tasksQueries.list().queryKey,
+        queryKey: tasksQueries.tasks().queryKey,
       });
     },
     onError: () => {
