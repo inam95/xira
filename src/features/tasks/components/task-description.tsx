@@ -17,16 +17,21 @@ export function TaskDescription({ task }: Props) {
   const { mutate: updateTask, isPending } = useUpdateTask();
 
   const handleUpdateTask = () => {
-    updateTask({
-      json: {
-        description,
+    updateTask(
+      {
+        json: {
+          description,
+        },
+        param: {
+          taskId: task.$id,
+        },
       },
-      param: {
-        taskId: task.$id,
-      },
-    });
-
-    setIsEditing(false);
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+        },
+      }
+    );
   };
 
   return (

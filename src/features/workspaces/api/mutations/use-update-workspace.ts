@@ -3,7 +3,6 @@ import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/rpc";
 import { toast } from "sonner";
 import { workspaceQueries } from "../queries";
-import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<
   (typeof client.api.workspaces)[":workspaceId"]["$patch"],
@@ -15,7 +14,6 @@ type RequestType = InferRequestType<
 
 export const useUpdateWorkspace = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ form, param }) => {
@@ -30,11 +28,15 @@ export const useUpdateWorkspace = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       toast.success("Workspace updated");
-      router.refresh();
       queryClient.invalidateQueries({
         queryKey: workspaceQueries.list().queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: workspaceQueries.workspaceById({
+          workspaceId: data.$id,
+        }).queryKey,
       });
     },
     onError: () => {

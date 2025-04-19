@@ -61,20 +61,10 @@ export function EditProjectForm({
       image: data.image instanceof File ? data.image : "",
     };
 
-    updateProject(
-      { form: finalValues, param: { projectId: initialValues.$id } },
-      {
-        onSuccess: () => {
-          form.reset({
-            name: "",
-            image: undefined,
-          });
-          if (inputRef.current) {
-            inputRef.current.value = "";
-          }
-        },
-      }
-    );
+    updateProject({
+      form: finalValues,
+      param: { projectId: initialValues.$id },
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -71,20 +71,10 @@ export function EditWorkspaceForm({
       image: data.image instanceof File ? data.image : "",
     };
 
-    updateWorkspace(
-      { form: finalValues, param: { workspaceId: initialValues.$id } },
-      {
-        onSuccess: () => {
-          form.reset({
-            name: "",
-            image: undefined,
-          });
-          if (inputRef.current) {
-            inputRef.current.value = "";
-          }
-        },
-      }
-    );
+    updateWorkspace({
+      form: finalValues,
+      param: { workspaceId: initialValues.$id },
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

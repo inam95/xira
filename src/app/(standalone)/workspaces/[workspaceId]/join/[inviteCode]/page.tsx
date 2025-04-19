@@ -1,7 +1,6 @@
 import { getCurrent } from "@/features/auth/queries";
-import { getWorkspaceInfo } from "@/features/workspaces/queries";
-import { JoinWorkspaceForm } from "@/features/workspaces/components/join-workspace-form";
 import { redirect } from "next/navigation";
+import { JoinWorkspaceClient } from "./client";
 
 type JoinWorkspacePageProps = {
   params: Promise<{
@@ -21,15 +20,5 @@ export default async function JoinWorkspacePage({
 
   const { workspaceId } = await params;
 
-  const workspaceInfo = await getWorkspaceInfo({ workspaceId });
-
-  if (!workspaceInfo) {
-    redirect("/");
-  }
-
-  return (
-    <div className="w-full lg:max-w-xl">
-      <JoinWorkspaceForm initialValues={workspaceInfo} />
-    </div>
-  );
+  return <JoinWorkspaceClient workspaceId={workspaceId} />;
 }

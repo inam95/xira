@@ -45,6 +45,36 @@ const app = new Hono()
       });
     }
   )
+  .get(
+    "/:projectId",
+    sessionMiddleware,
+    zValidator("param", z.object({ projectId: z.string() })),
+    async (c) => {
+      const { projectId } = c.req.valid("param");
+      const databases = c.get("databases");
+      const user = c.get("user");
+
+      const project = await databases.getDocument<Project>(
+        DATABASE_ID,
+        PROJECTS_COLLECTION_ID,
+        projectId
+      );
+
+      const member = await getMember({
+        databases,
+        userId: user.$id,
+        workspaceId: project.workspaceId,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      return c.json({
+        data: project,
+      });
+    }
+  )
   .post(
     "/",
     sessionMiddleware,
