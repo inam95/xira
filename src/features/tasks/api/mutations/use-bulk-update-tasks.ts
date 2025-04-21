@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 import { tasksQueries } from "../queries";
+import { projectsQueries } from "@/features/projects/api/queries";
+import { workspaceQueries } from "@/features/workspaces/api/queries";
 
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)["bulk-update"]["$post"],
@@ -27,10 +29,21 @@ export const useBulkUpdateTasks = () => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       toast.success("Task updated");
       queryClient.invalidateQueries({
         queryKey: tasksQueries.list().queryKey,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: projectsQueries.projectAnalytics({
+          projectId: data[0].projectId,
+        }).queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: workspaceQueries.workspaceAnalytics({
+          workspaceId: data[0].workspaceId,
+        }).queryKey,
       });
     },
     onError: () => {
