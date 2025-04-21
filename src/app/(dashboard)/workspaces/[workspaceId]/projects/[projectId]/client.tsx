@@ -1,5 +1,6 @@
 "use client";
 
+import { Analytics } from "@/components/analytics";
 import { PageError } from "@/components/page-error";
 import { PageLoader } from "@/components/page-loader";
 import { Button } from "@/components/ui/button";
@@ -16,11 +17,19 @@ type Props = {
 };
 
 export function ProjectIdClient({ workspaceId, projectId }: Props) {
-  const { data: project, isLoading } = useQuery({
+  const { data: project, isLoading: isProjectLoading } = useQuery({
     ...projectsQueries.projectById({
       projectId,
     }),
   });
+
+  const { data: analytics, isLoading: isAnalyticsLoading } = useQuery({
+    ...projectsQueries.projectAnalytics({
+      projectId,
+    }),
+  });
+
+  const isLoading = isProjectLoading || isAnalyticsLoading;
 
   if (isLoading) {
     return <PageLoader />;
@@ -52,6 +61,7 @@ export function ProjectIdClient({ workspaceId, projectId }: Props) {
           </Button>
         </div>
       </div>
+      {analytics ? <Analytics data={analytics} /> : null}
       <TaskViewSwitcher hideProjectFilter />
     </div>
   );

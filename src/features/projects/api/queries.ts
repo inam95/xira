@@ -1,5 +1,6 @@
 import { client } from "@/lib/rpc";
 import { queryOptions } from "@tanstack/react-query";
+import { InferResponseType } from "hono";
 
 export const projectsQueries = {
   projects: () => queryOptions({ queryKey: ["projects"] as const }),
@@ -42,4 +43,32 @@ export const projectsQueries = {
         return data;
       },
     }),
+
+  projectAnalytics: ({ projectId }: { projectId: string }) =>
+    queryOptions({
+      queryKey: [
+        ...projectsQueries.projects().queryKey,
+        "analytics",
+        projectId,
+      ],
+      queryFn: async () => {
+        const response = await client.api.projects[":projectId"]["analytics"][
+          "$get"
+        ]({
+          param: { projectId },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch project analytics");
+        }
+
+        const { data } = await response.json();
+        return data;
+      },
+    }),
 };
+
+export type TProjectAnalyticsResponse = InferResponseType<
+  (typeof client.api.projects)[":projectId"]["analytics"]["$get"],
+  200
+>;
