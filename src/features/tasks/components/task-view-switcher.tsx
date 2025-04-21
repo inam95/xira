@@ -19,6 +19,7 @@ import { TaskStatus } from "../types";
 import { useCallback } from "react";
 import { useBulkUpdateTasks } from "../api/mutations/use-bulk-update-tasks";
 import { DataCalendar } from "./data-calendar";
+import { useProjectId } from "@/features/projects/hooks/use-project-id";
 
 type TaskViewSwitcherProps = {
   hideProjectFilter?: boolean;
@@ -33,12 +34,15 @@ export function TaskViewSwitcher({ hideProjectFilter }: TaskViewSwitcherProps) {
       parse: (value) => value as "table" | "kanban" | "calendar",
     }
   );
+
+  const paramProjectId = useProjectId();
+
   const workspaceId = useWorkspaceId();
   const { open } = useCreateTaskModal();
   const { data: tasks, isLoading: isTasksLoading } = useQuery({
     ...tasksQueries.filteredList({
       workspaceId: workspaceId,
-      projectId,
+      projectId: paramProjectId ?? projectId,
       status,
       assigneeId,
       search,
