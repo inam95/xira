@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default async function ProjectPage({ params }: Props) {
-  const user = getCurrent();
+  const user = await getCurrent();
 
   if (!user) {
     redirect("/sign-in");

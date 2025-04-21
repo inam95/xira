@@ -5,7 +5,6 @@ import { JoinWorkspaceClient } from "./client";
 type JoinWorkspacePageProps = {
   params: Promise<{
     workspaceId: string;
-    inviteCode: string;
   }>;
 };
 
