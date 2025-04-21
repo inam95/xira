@@ -1,24 +1,24 @@
 "use client";
 
-import Link from "next/link";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DottedSeparator } from "@/components/dotted-separator";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { signInSchema } from "../schemas";
+import { Input } from "@/components/ui/input";
+import { signUpWithGithub } from "@/lib/oauth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { FaGithub } from "react-icons/fa";
+import { z } from "zod";
 import { useLogin } from "../api/mutations/use-login";
+import { signInSchema } from "../schemas";
 
 export function SignInCard() {
   const { mutate: login, isPending } = useLogin();
@@ -94,7 +94,7 @@ export function SignInCard() {
         <DottedSeparator />
       </div>
       <CardContent className="flex flex-col gap-y-4 p-7">
-        <Button
+        {/* <Button
           variant="secondary"
           size="lg"
           className="w-full"
@@ -102,12 +102,13 @@ export function SignInCard() {
         >
           <FcGoogle className="w-4 h-4 mr-2" />
           Sign in with Google
-        </Button>
+        </Button> */}
         <Button
           variant="secondary"
           size="lg"
           className="w-full"
           disabled={false}
+          onClick={() => signUpWithGithub()}
         >
           <FaGithub className="w-4 h-4 mr-2" />
           Sign in with Github
