@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xira
 
-## Getting Started
+A lightweight, modern project management tool inspired by Jira. Xira offers essential features for workspace, project, task, and member management, with a clean UI and efficient workflows.
 
-First, run the development server:
+[Live Demo](https://xira-three.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Authentication:** Secure user sign-up, login, and session management.
+- **Workspace Management:** Create and manage multiple workspaces for different teams or projects.
+- **Project Management:** Organize projects within workspaces, each with its own settings and members.
+- **Task Management:** Create, assign, and track tasks with status updates and priorities.
+- **Member Management:** Invite and manage workspace/project members with role-based access.
+- **Modern UI:** Responsive, accessible, and visually appealing interface.
+- **Efficient Data Fetching:** Optimized state management and API calls using React Query.
+- **Performance:** Fast load times and smooth user experience.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** [Next.js](https://nextjs.org/), [React](https://react.dev/), [TailwindCSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
+- **Backend/API:** [Hono](https://hono.dev/), [Appwrite](https://appwrite.io/)
+- **State/Data:** [React Query](https://tanstack.com/query/latest)
+- **UI/UX:** [shadcn/ui](https://ui.shadcn.com/), [TailwindCSS](https://tailwindcss.com/)
+- **Deployment:** [Vercel](https://vercel.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
 
-## Deploy on Vercel
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/inam95/xira.git
+   cd xira
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Configure environment variables:**
+   - Refer `src/config.ts` and set up the `.env`
+
+4. **Run the development server:**
+   ```bash
+   pnpm run dev
+   ```
+
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
